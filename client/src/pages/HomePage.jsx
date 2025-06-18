@@ -152,13 +152,16 @@ const Homepage = ({user}) => {
     handleClose();
   };
 
-  const handleEventifyClick = (designId, isTeamDesign = false) => {
-    // Use navigate to go to the event page with the designId
-    if (isTeamDesign)
-      navigate(`/share/teams/${designId}`)
-    else
-      navigate(`/share/${designId}`);
-  };
+  const handleEventifyClick = (designIdOrTeamCode, isTeamDesign = false, event) => {
+  event?.preventDefault(); // Prevent anchor default behavior if needed
+ console.log('Navigating to', isTeamDesign ? `/share?teamCode=${designIdOrTeamCode}` : `/share?designId=${designIdOrTeamCode}`);
+
+  if (isTeamDesign) {
+    navigate(`/share?teamCode=${designIdOrTeamCode}`);
+  } else {
+    navigate(`/share?designId=${designIdOrTeamCode}`);
+  }
+};
 
   const handleDeleteClick = async (designId, isTeamDesign = false) => {
     console.log("downloading")
@@ -299,7 +302,8 @@ const Homepage = ({user}) => {
                         }}
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleEventifyClick(design._id); // Navigate to event page
+                           e.preventDefault();
+                          handleEventifyClick(design._id,false,e); // Navigate to share page
                         }}
                       >
                         Share
@@ -415,7 +419,8 @@ const Homepage = ({user}) => {
                             }}
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleEventifyClick(design.teamCode, true); // Navigate to event page
+                               e.preventDefault();
+                              handleEventifyClick(design.teamCode, true,e); // Navigate to event page
                             }}
                           >
                             Share
@@ -734,7 +739,7 @@ const Homepage = ({user}) => {
                               }}
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleEventifyClick(design.teamCode, true);
+                                handleEventifyClick(design.teamCode, true,e);
                               }}
                             >
                               Share

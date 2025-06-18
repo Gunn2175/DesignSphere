@@ -118,6 +118,21 @@ function App() {
               <PrintOrderPage user={user} />
             </PrivateRoute>
           }
+        /> <Route
+          path="/share"
+          element={
+            <PrivateRoute user={user}>
+              <SharePage user={user} />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/share/teams/:teamCode"
+          element={
+            <PrivateRoute user={user}>
+              <SharePage user={user} />
+            </PrivateRoute>
+          }
         />
         <Route
           path="/teams"

@@ -1,6 +1,6 @@
 // src/pages/SharePage.js
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -13,27 +13,32 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import XIcon from '@mui/icons-material/X';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import axios from 'axios';
-import axiosInstance from "../services/axiosInstance";
+import axiosInstance from '../services/axiosInstance';
+import Header from '../components/Layouts/Header';
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const SharePage = () => {
-  const { designId } = useParams();
+const SharePage = ({ user }) => {
+  console.log('SharePage user:', user);
+  const [searchParams] = useSearchParams();
+  const designId = searchParams.get('designId');
+  const teamCode = searchParams.get('teamCode');
+
   const [design, setDesign] = useState(null);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     const fetchDesign = async () => {
       try {
-        const res = await axiosInstance.get(`${BASE_URL}/share/${designId}`,{
-          withCredentials: true,}
-        );
+       const idToUse = designId || teamCode;
+        const res = await axiosInstance.get(`${BASE_URL}/share/${idToUse}`, {
+          withCredentials: true,
+        });
         setDesign(res.data);
       } catch (err) {
         console.error('Failed to fetch design');
       }
     };
     fetchDesign();
-  }, [designId]);
+  }, [designId, teamCode]);
 
   const handleCopy = () => {
     if (design?.imageUrl) {
