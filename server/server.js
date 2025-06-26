@@ -4,6 +4,11 @@ const http = require('http');
 const morgan=require('morgan')
 const dotenv= require('dotenv');
 const cookieParser = require("cookie-parser");
+
+const path = require('path');
+
+
+
 const { Server } = require('socket.io');
 const connectDb = require('./config/connectDb')
 const path = require('path');
@@ -24,13 +29,22 @@ const shareRoutes=require('./routes/shareRoutes')
 dotenv.config();;
 //database call
 connectDb();
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://designsphere27.netlify.app'
+];
 
 //rest object
 const app=express()
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",  // Allow only your client origin
+
+    origin: ["http://localhost:3000",
+      'https://designsphere27.netlify.app',
+      ], // Allow only your client origin
+    //methods: ["GET", "POST","PUT"],
+
     credentials: true
   }
   });
@@ -40,8 +54,15 @@ app.use(cookieParser());
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(cors({
-  origin: 'http://localhost:3000',
-  credentials: true
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
 }));
 
 //for testing only
@@ -57,14 +78,13 @@ app.use('/api/v1/users',require('./routes/userRoute'))
 
 
 // Serve static files from the 'uploads' directory
-app.use('/api/v1/uploads/images', express.static('server/uploads/images'));
+app.use('/api/v1/uploads/images', express.static(path.join(__dirname, 'uploads/images')));
 
-app.use(
-  '/api/v1/uploads/animations',
-  express.static(path.join(__dirname, 'uploads', 'animations'))
-);
 
-app.use('/api/v1/uploads/designimage',express.static('server/uploads/designimage'));
+app.use('/api/v1/uploads/animations',  express.static(path.join(__dirname, 'uploads/animations')));
+
+
+app.use('/api/v1/uploads/designimage',express.static(path.join(__dirname, 'uploads/designimage')));
 
 //design page
 //sidebaritems and fileupload (images)

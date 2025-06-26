@@ -4,7 +4,7 @@ import { useDrag } from 'react-dnd';
 import Lottie from 'lottie-react';
 import socket from '../../socket'
 import { useParams } from 'react-router-dom';
-  
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const SidebarItem = ({ item }) => { 
     const teamCode=useParams()
     const [{ isDragging }, drag] = useDrag(() => ({
@@ -19,14 +19,20 @@ const SidebarItem = ({ item }) => {
 
     useEffect(() => {
         if (item.type === 'animatedText') {
-            let url = item.animationUrl.trim();
 
-            // Ensure it starts with a single slash
-            if (!/^https?:\/\//.test(url)) {
-              if (!url.startsWith('/')) url = '/' + url;
-              url = `/api/v1${url}`;
-            }
-        
+          let url = item.animationUrl; // The URL you want to fetch
+      
+          // Check if the URL is relative (doesn't start with 'http' or 'https')
+          if (!/^https?:\/\//.test(url)) {
+            // Split into path and filename
+            const parts = url.split('/');
+            const filename = encodeURIComponent(parts.pop()); // Encode only the filename
+            const path = parts.join('/');
+            console.log(path);
+            url = `${BASE_URL}${path}/${filename}`;
+          }
+          
+
       
           console.log("Fetching from URL:", url); // Log the full URL being fetched
       

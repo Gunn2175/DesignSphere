@@ -16,6 +16,8 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import axiosInstance from '../services/axiosInstance';
 import Header from '../components/Layouts/Header';
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 const SharePage = ({ user }) => {
   console.log('SharePage user:', user);
   const [searchParams] = useSearchParams();
@@ -29,7 +31,9 @@ const SharePage = ({ user }) => {
     const fetchDesign = async () => {
       try {
        const idToUse = designId || teamCode;
-        const res = await axiosInstance.get(`/api/v1/share/${idToUse}`, {
+
+        const res = await axiosInstance.get(`${BASE_URL}/share/${idToUse}`, {
+
           withCredentials: true,
         });
         setDesign(res.data);

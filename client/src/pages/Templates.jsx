@@ -3,8 +3,12 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import Header from '../components/Layouts/Header';
+
 import { Typography,Box,Button } from '@mui/material';
 import { fetchTemplatesFromUnsplash } from '../services/unsplashService.js'; 
+
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const Templates = ({user}) => {
   const [templates, setTemplates] = useState([]);
@@ -13,8 +17,10 @@ const Templates = ({user}) => {
   const teamCode = location.state?.teamCode || '';
   const [originalTemplates, setOriginalTemplates] = useState([]);
   useEffect(() => {
-    axios.get('/api/v1/templates/get-templates')
-      .then(async (response) => {
+
+    axios.get(`${BASE_URL}/templates/get-templates`)
+      .then(async(response) => {
+
         console.log("response", response.data);
          const apiTemplates = await  fetchTemplatesFromUnsplash('background');
          console.log('🟢 Unsplash templates:', apiTemplates);

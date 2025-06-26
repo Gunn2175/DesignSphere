@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Button, TextField, Typography, Box, Paper } from '@mui/material';
 import Header from '../components/Layouts/Header';
-
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const PrintOrderPage = ({ user }) => { // Accepting user prop
     const { designId, teamCode } = useParams();
     const [design, setDesign] = useState(null);
@@ -20,12 +20,12 @@ const PrintOrderPage = ({ user }) => { // Accepting user prop
             let response;
             try {
                 if (teamCode) {
-                    response = await axios.get(`/api/v1/designs/team-designs/${teamCode}`, {
+                    response = await axios.get(`${BASE_URL}/designs/team-designs/${teamCode}`, {
                         withCredentials: true,
                     });
                     setTeamDesign(response.data);
                 } else {
-                    response = await axios.get(`/api/v1/designs/${designId}`, {
+                    response = await axios.get(`${BASE_URL}/designs/${designId}`, {
                         withCredentials: true,
                     });
                     setDesign(response.data);
@@ -54,8 +54,10 @@ const PrintOrderPage = ({ user }) => { // Accepting user prop
                 ? { teamCode, userDetails }
                 : { designId, userDetails };
 
-            console.log('sending from frontend to backend for printing', payload);
-            await axios.post('/api/v1/shop/send', payload, { withCredentials: true });
+
+            console.log('sending from frontend to backend for printing');
+            await axios.post(`${BASE_URL}/shop/send`, payload, { withCredentials: true });
+
 
             alert('Design and details sent to local shop!');
         } catch (error) {

@@ -74,7 +74,11 @@ const RightSection = styled(Box)({
   borderRadius: '0 10px 10px 0',
 });
 
+
 const Register = (setUser) => {
+
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   const isSmallScreen = useMediaQuery("(max-width: 700px)");
   const navigate = useNavigate();
   
@@ -90,7 +94,7 @@ const Register = (setUser) => {
   
       console.log("📤 Google Login Data:", userData);
   
-      const response = await axios.post('/api/v1/users/google-login', userData, {
+      const response = await axios.post(`${BASE_URL}/users/google-login`, userData, {
         withCredentials: true,
         headers: { "Content-Type": "application/json" },
       });
@@ -129,7 +133,7 @@ const Register = (setUser) => {
     console.log("📤 Sending Data to Backend:", values);
   
     try {
-      const response = await axios.post('/api/v1/users/register', values, {
+      const response = await axios.post(`${BASE_URL}/users/register`, values, {
         withCredentials: true,
         headers: { "Content-Type": "application/json" },
       });
