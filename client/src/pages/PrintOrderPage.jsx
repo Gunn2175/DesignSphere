@@ -15,8 +15,6 @@ const PrintOrderPage = ({ user }) => { // Accepting user prop
         address: '', // No address available by default
     });
 
-    const designRef = useRef(null); // Reference to the design image for printing
-
     useEffect(() => {
         const fetchDesignDetails = async () => {
             let response;
@@ -56,8 +54,10 @@ const PrintOrderPage = ({ user }) => { // Accepting user prop
                 ? { teamCode, userDetails }
                 : { designId, userDetails };
 
+
             console.log('sending from frontend to backend for printing');
             await axios.post(`${BASE_URL}/shop/send`, payload, { withCredentials: true });
+
 
             alert('Design and details sent to local shop!');
         } catch (error) {

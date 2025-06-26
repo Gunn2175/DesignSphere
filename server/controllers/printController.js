@@ -122,4 +122,6 @@ const printController= async (req, res) => {
         }
     }
 
+
     module.exports = { printController };
+

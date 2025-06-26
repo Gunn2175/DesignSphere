@@ -2,11 +2,14 @@
 const express = require('express');
 const { getSidebarItems,imageupload } = require('../controllers/sidebarController');
 const router = express.Router();
+
+
 const fs = require('fs');
 const path = require('path');
 
 const multer = require('multer');
 const imageUploadPath = path.join(__dirname, '../uploads/images');
+
 
 // Create folder if it doesn't exist
 if (!fs.existsSync(imageUploadPath)) {
@@ -15,12 +18,14 @@ if (!fs.existsSync(imageUploadPath)) {
 
 // Use this path in multer
 const storage = multer.diskStorage({
+
   destination: (req, file, cb) => {
     cb(null, imageUploadPath);
   },
   filename: (req, file, cb) => {
     cb(null, Date.now() + '-' + file.originalname);
   }
+
 });
 
 // // Configure multer storage

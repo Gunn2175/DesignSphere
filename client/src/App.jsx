@@ -22,7 +22,8 @@ function App() {
   const location = useLocation();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const clientId = '272513661609-dlsg5lhebhojdk72qr40gk1itduhgk2i.apps.googleusercontent.com';
+
+ const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
   useEffect(() => {
     const publicRoutes = ["/", "/login", "/register"];
@@ -58,10 +59,8 @@ function App() {
         {/* Public Routes */}
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login setUser={setUser} />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/share/:designId" element={<SharePage />} />
-        <Route path="/share/teams/:teamCode" element={<SharePage />} />
-
+        <Route path="/register" element={<Register setUser={setUser} />} />
+       
         {/* Protected Routes */}
         <Route
           path="/home"

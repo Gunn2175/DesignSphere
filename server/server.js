@@ -3,15 +3,15 @@ const cors=require('cors')
 const http = require('http');
 const morgan=require('morgan')
 const dotenv= require('dotenv');
-const colors=require('colors')
 const cookieParser = require("cookie-parser");
+
 const path = require('path');
 
 
-const { Server } = require('socket.io');
-//const { v4: uuidv4 } = require('uuid'); // for generating unique team codes
-const connectDb = require('./config/connectDb')
 
+const { Server } = require('socket.io');
+const connectDb = require('./config/connectDb')
+const path = require('path');
 // Import routes and socket handler
 const teamRoutes = require('./routes/projectRoutes');
 const canvasSocket = require('./sockets/canvasSocket');
@@ -39,16 +39,18 @@ const app=express()
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
+
     origin: ["http://localhost:3000",
       'https://designsphere27.netlify.app',
       ], // Allow only your client origin
     //methods: ["GET", "POST","PUT"],
+
     credentials: true
   }
   });
   
   //middlewares
-  app.use(cookieParser());
+app.use(cookieParser());
 app.use(morgan('dev'))
 app.use(express.json())
 app.use(cors({
@@ -74,16 +76,17 @@ app.use((req, res, next) => {
 //for user 
 app.use('/api/v1/users',require('./routes/userRoute'))
 
-//design page
 
 // Serve static files from the 'uploads' directory
 app.use('/api/v1/uploads/images', express.static(path.join(__dirname, 'uploads/images')));
 
+
 app.use('/api/v1/uploads/animations',  express.static(path.join(__dirname, 'uploads/animations')));
+
 
 app.use('/api/v1/uploads/designimage',express.static(path.join(__dirname, 'uploads/designimage')));
 
-
+//design page
 //sidebaritems and fileupload (images)
 app.use('/api/v1/designpage', sidebarItemsRoutes);
 //get templates
@@ -91,9 +94,7 @@ app.use('/api/v1/templates', templatesRoutes);
 
 //save design
 app.use('/api/v1/designs',savedesignRoutes);
-;
-
-//app.use('/api/v1/projects', projectRoutes);
+//for teams
 app.use('/api/v1/teams', teamRoutes);
 
 
@@ -109,7 +110,7 @@ app.use('/api/v1/share',shareRoutes);
 
 
 //port
-const PORT=8080||process.env.PORT;
+const PORT=process.env.PORT||8080;
 
 //listen server
 server.listen(PORT,()=>{

@@ -74,8 +74,11 @@ const RightSection = styled(Box)({
   borderRadius: '0 10px 10px 0',
 });
 
-const Register = () => {
+
+const Register = (setUser) => {
+
   const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
   const isSmallScreen = useMediaQuery("(max-width: 700px)");
   const navigate = useNavigate();
   
@@ -96,10 +99,10 @@ const Register = () => {
         headers: { "Content-Type": "application/json" },
       });
   
-      const user = { ...response.data.user, password: '' };
-      localStorage.setItem('user', JSON.stringify(user));
+ 
   
       message.success('Login successful via Google');
+      setUser(response.data.user);
       navigate('/home');
     } catch (error) {
       console.error('❌ Google login failed:', error);
@@ -135,10 +138,11 @@ const Register = () => {
         headers: { "Content-Type": "application/json" },
       });
   
-      const user = { ...response.data.user, password: '' };
-      //localStorage.setItem('user', JSON.stringify(user));
+    
+     
       message.success('registration successful');
-      navigate('/login');
+      setUser(response.data.user);
+      navigate('/home');
     } catch (error) {
       console.error("❌ Registration error:", error);
       message.error("Invalid username or password");
