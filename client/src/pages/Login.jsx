@@ -76,7 +76,7 @@ const Login = ({ setUser }) => {
   const [loading, setLoading] = useState(false);
   const isSmallScreen = useMediaQuery("(max-width: 700px)");
   const navigate = useNavigate();
-
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
  
  
 // Check if already logged in (via cookie)
@@ -85,7 +85,7 @@ const Login = ({ setUser }) => {
       
 
       try {
-        const res = await axios.get('/users/check-auth', {
+        const res = await axios.get(`${BASE_URL}/users/check-auth`, {
           withCredentials: true,
         });
         if (res.data.user) {
@@ -114,7 +114,7 @@ const Login = ({ setUser }) => {
   
       console.log("📤 Google Login Data:", userData);
   
-      const response = await axios.post('/api/v1/users/google-login', userData, {
+    const response = await axios.post(`${BASE_URL}/users/google-login`, userData, {
         withCredentials: true,
         headers: { "Content-Type": "application/json" },
       });
@@ -151,7 +151,7 @@ const Login = ({ setUser }) => {
     console.log("📤 Sending Data to Backend:", values);
   
     try {
-      const response = await axios.post("/api/v1/users/login", values, {
+         const response = await axios.post(`${BASE_URL}/users/login`, values, {
         withCredentials: true,
        
       });
