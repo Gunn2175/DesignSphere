@@ -16,10 +16,6 @@ import img3 from '../assets/img3.png';
 import img4 from '../assets/img4.png';
 
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-
-
 
 const Container = styled(Box)({
   display: 'flex',
@@ -77,17 +73,19 @@ const RightSection = styled(Box)({
 });
 
 const Login = ({ setUser }) => {
+  const [loading, setLoading] = useState(false);
   const isSmallScreen = useMediaQuery("(max-width: 700px)");
   const navigate = useNavigate();
 
-   // Local state to manage loading
-   const [loading, setLoading] = useState(true);
+ 
  
 // Check if already logged in (via cookie)
   useEffect(() => {
     const checkLogin = async () => {
+      
+
       try {
-        const res = await axios.get(`${BASE_URL}/users/check-auth`, {
+        const res = await axios.get('/users/check-auth', {
           withCredentials: true,
         });
         if (res.data.user) {
@@ -100,6 +98,7 @@ const Login = ({ setUser }) => {
       finally {
         setLoading(false);
       }
+    
     };
     checkLogin();
   }, [navigate,setUser]);
@@ -115,7 +114,7 @@ const Login = ({ setUser }) => {
   
       console.log("📤 Google Login Data:", userData);
   
-      const response = await axios.post(`${BASE_URL}/users/google-login`, userData, {
+      const response = await axios.post('/api/v1/users/google-login', userData, {
         withCredentials: true,
         headers: { "Content-Type": "application/json" },
       });
@@ -126,6 +125,9 @@ const Login = ({ setUser }) => {
     } catch (error) {
       console.error('❌ Google login failed:', error);
       message.error('Google login failed. Please try again.');
+    }
+    finally {
+      setLoading(false);
     }
   };
   
@@ -149,7 +151,7 @@ const Login = ({ setUser }) => {
     console.log("📤 Sending Data to Backend:", values);
   
     try {
-      const response = await axios.post(`${BASE_URL}/users/login`, values, {
+      const response = await axios.post("/api/v1/users/login", values, {
         withCredentials: true,
        
       });
@@ -163,10 +165,11 @@ const Login = ({ setUser }) => {
       console.error("❌ Login error:", error);
       message.error("Invalid username or password");
     }
+    finally {
+      setLoading(false);
+    }
   };
-  if (loading) {
-    return <h1>Loading...</h1>;
-  }
+ 
   
   return (
     <> 
@@ -238,25 +241,85 @@ const Login = ({ setUser }) => {
           </ImageBox>
         </LeftSection>
         <RightSection>
-          <Typography variant="h5" gutterBottom color="#e46064">
-            Login to DesignSphere
-          </Typography>
-          <Box component="form" onSubmit={submitHandler} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <TextField label="Email" name="email" type="email" fullWidth required sx={{ backgroundColor: '#f6bea9', borderRadius: 1 }} />
-            <TextField label="Password" name="password" type="password" fullWidth required sx={{ backgroundColor: '#ffb8b8', borderRadius: 1 }} />
-            <Button variant="contained" sx={{ backgroundColor: '#90b0e6', color: '#fffdf0' }} type="submit" fullWidth>
-              Login
-            </Button>
-          </Box>
-          <Typography variant="body2" sx={{ marginTop: 2 }}>
-            Don't have an account? <Link to="/register" style={{ color: '#519bc5' }}>Register</Link>
-          </Typography>
-          <Typography variant="body2" sx={{ marginTop: 2, color: '#e46064' }}>OR</Typography>
-          <Box sx={{ marginTop: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <GoogleLogin onSuccess={onGoogleLoginSuccess} onError={onGoogleLoginError} />
-           
-          </Box>
-        </RightSection>
+  <Typography variant="h5" gutterBottom color="#e46064">
+    Login to DesignSphere
+  </Typography>
+
+  {loading && (
+    <Box
+      sx={{
+        backgroundColor: "#fff3cd",
+        border: "1px solid #ffeeba",
+        padding: 2,
+        borderRadius: 1,
+        color: "#856404",
+        marginBottom: 2,
+        textAlign: "center",
+        fontWeight: "bold",
+      }}
+    >
+      Logging in... Please wait. This may take a few seconds.
+    </Box>
+  )}
+
+  <Box
+    component="form"
+    onSubmit={(e) => {
+      setLoading(true);
+      submitHandler(e);
+    }}
+    sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+  >
+    <TextField
+      label="Email"
+      name="email"
+      type="email"
+      fullWidth
+      required
+      sx={{ backgroundColor: '#f6bea9', borderRadius: 1 }}
+    />
+    <TextField
+      label="Password"
+      name="password"
+      type="password"
+      fullWidth
+      required
+      sx={{ backgroundColor: '#ffb8b8', borderRadius: 1 }}
+    />
+    <Button
+      variant="contained"
+      sx={{ backgroundColor: '#90b0e6', color: '#fffdf0' }}
+      type="submit"
+      fullWidth
+      disabled={loading}
+    >
+      {loading ? 'Logging in...' : 'Login'}
+    </Button>
+  </Box>
+
+  <Typography variant="body2" sx={{ marginTop: 2 }}>
+    Don't have an account?{' '}
+    <Link to="/register" style={{ color: '#519bc5' }}>
+      Register
+    </Link>
+  </Typography>
+
+  <Typography variant="body2" sx={{ marginTop: 2, color: '#e46064' }}>OR</Typography>
+
+  <Box sx={{ marginTop: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <GoogleLogin
+      onSuccess={(res) => {
+        setLoading(true);
+        onGoogleLoginSuccess(res);
+      }}
+      onError={(err) => {
+        setLoading(false);
+        onGoogleLoginError(err);
+      }}
+    />
+  </Box>
+</RightSection>
+
       </LoginBox>
     </Container>
     </>
